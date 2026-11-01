@@ -27,7 +27,6 @@ def invoke_llm(state: SessionState, messages: list) -> str:
             return reply
         result = state.tools[tool_name].run(" ".join(tool_args))
         print(f"Tool: {tool_name} {' '.join(tool_args)}")
-        print("\n".join(f"| {line}" for line in result.splitlines()))
         messages.append(
             {
                 "role": "user",
