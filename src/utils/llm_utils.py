@@ -22,11 +22,12 @@ def invoke_llm(state: SessionState, messages: list) -> str:
                 time.sleep(INVOKE_RETRY_DELAY_SECONDS)
         reply = response.output_text
 
-        reply_start, tool_name, *tool_args = reply.split()
+        reply_start, tool_name, *rest = reply.split(maxsplit=2)
         if reply_start != "[TOOL]" or tool_name not in state.tools:
             return reply
-        result = state.tools[tool_name].run(" ".join(tool_args))
-        print(f"Tool: {tool_name} {' '.join(tool_args)}")
+        tool_args = rest[0] if rest else ""
+        result = state.tools[tool_name].run(tool_args)
+        print(f"Tool: {tool_name} {tool_args}")
         messages.append(
             {
                 "role": "user",

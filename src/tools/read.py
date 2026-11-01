@@ -3,8 +3,8 @@
 from pathlib import Path
 
 
-def run(path: str) -> str:
+def run(args: str) -> str:
     try:
-        return Path(path).read_text()
+        return Path(args).read_text()
     except FileNotFoundError:
-        return f"Error: file not found: {path}"
+        return f"Error: file not found: {args}"
