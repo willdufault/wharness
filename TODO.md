@@ -3,12 +3,14 @@
 - [ ] add edit tool
 - [ ] add bash tool
 - [ ] add web tool
+- [ ] add check that tool call is in cur dir, reject otherwise
+- [ ] add human approval option
 - [ ] improve base system prompt
 - [ ] tui overhaul
 - [ ] audit state obj usage + values; pass indiv params to fcns instead?
 ---
-- [.] add write tool (fix bugs, improve)
 ---
+- [x] add write tool
 - [x] add read tool
 - [x] create common state passed around (src/models/session_state.py dataclass, data-only record)
 - [x] remove unnecessary docstrings, make comments concise, debloat code

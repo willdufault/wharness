@@ -28,10 +28,11 @@ def invoke_llm(state: SessionState, messages: list) -> str:
         tool_args = rest[0] if rest else ""
         result = state.tools[tool_name].run(tool_args)
         print(f"Tool: {tool_name} {tool_args}")
+        messages.append({"role": "assistant", "content": reply})
         messages.append(
             {
                 "role": "user",
-                "content": "[TOOL RESULT] Use this to answer in your own words — don't repeat it verbatim. All results you need are here; don't call this tool again with the same arguments. Answer now:\n"
+                "content": "[TOOL RESULT] The tool ran. If the task is done, answer the user in your own words; don't repeat raw output. Don't call a tool again with the same arguments.\n"
                 + result,
             }
         )
