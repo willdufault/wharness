@@ -2,6 +2,7 @@ import time
 
 import openai
 
+from src.models.openai_client import get_openai_client
 from src.models.session_state import SessionState
 
 MAX_INVOKE_ATTEMPTS = 3
@@ -13,7 +14,7 @@ def invoke_llm(state: SessionState, messages: list) -> str:
     while True:
         for attempt_number in range(1, MAX_INVOKE_ATTEMPTS + 1):
             try:
-                response = state.client.responses.create(model=state.model, input=messages)
+                response = get_openai_client().responses.create(model=state.model, input=messages)
                 break
             except (openai.RateLimitError, openai.APIConnectionError) as invoke_error:
                 if attempt_number == MAX_INVOKE_ATTEMPTS:

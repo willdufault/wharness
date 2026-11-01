@@ -7,8 +7,8 @@
 - [ ] add human approval option
 - [ ] improve base system prompt
 - [ ] tui overhaul
-- [ ] audit state obj usage + values; pass indiv params to fcns instead?
 ---
+- [ ] audit state obj usage + values; pass indiv params to fcns instead?
 ---
 - [x] add write tool
 - [x] add read tool

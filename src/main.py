@@ -1,17 +1,14 @@
 import inspect
-import os
 from importlib import util as importlib_util
 from pathlib import Path
 from types import ModuleType
 
 from dotenv import load_dotenv
-from openai import OpenAI
 
 from src.models.session_state import SessionState
 from src.utils.llm_utils import invoke_llm
 
 MODEL = "nvidia/nemotron-3.5-lightning:free"
-BASE_URL = "https://openrouter.ai/api/v1"
 EXIT_COMMANDS = ("exit", "quit", ":q")
 
 
@@ -84,12 +81,11 @@ def handle_command(user_input: str, state: SessionState, commands: dict, skills:
 
 def main():
     load_dotenv()
-    client = OpenAI(base_url=BASE_URL, api_key=os.environ["OPENROUTER_API_KEY"])
 
     tools = load_tools()
     commands = load_commands()
     skills = load_skills()
-    state = SessionState(model=MODEL, client=client, tools=tools, messages=[{"role": "system", "content": render_system_prompt(tools)}])
+    state = SessionState(model=MODEL, tools=tools, messages=[{"role": "system", "content": render_system_prompt(tools)}])
 
     while True:
         try:
