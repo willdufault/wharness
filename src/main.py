@@ -58,7 +58,7 @@ def render_system_prompt(tools: dict) -> str:
     )
 
 
-def handle_command(user_input: str, state: SessionState, commands: dict, skills: dict):
+def handle_command(user_input: str, state: SessionState, commands: dict, skills: dict, tools: dict):
     command_name, *command_args = user_input.lstrip("/").split(maxsplit=1)
     command_arg = command_args[0] if command_args else ""
     if command_name in commands:
@@ -72,7 +72,7 @@ def handle_command(user_input: str, state: SessionState, commands: dict, skills:
             skill_message += f"\n\nArguments: {command_arg}"
         print(f"Skill: {command_name}")
         state.messages.append({"role": "user", "content": skill_message})
-        reply = invoke_llm(state, state.messages)
+        reply = invoke_llm(state, tools)
         state.messages.append({"role": "assistant", "content": reply})
         print(f"Agent: {reply}\n")
     else:
@@ -85,7 +85,7 @@ def main():
     tools = load_tools()
     commands = load_commands()
     skills = load_skills()
-    state = SessionState(model=MODEL, tools=tools, messages=[{"role": "system", "content": render_system_prompt(tools)}])
+    state = SessionState(model=MODEL, messages=[{"role": "system", "content": render_system_prompt(tools)}])
 
     while True:
         try:
@@ -96,10 +96,10 @@ def main():
             break
 
         if user_input.startswith("/"):
-            handle_command(user_input, state, commands, skills)
+            handle_command(user_input, state, commands, skills, tools)
         else:
             state.messages.append({"role": "user", "content": user_input})
-            reply = invoke_llm(state, state.messages)
+            reply = invoke_llm(state, tools)
             state.messages.append({"role": "assistant", "content": reply})
             print(f"Agent: {reply}\n")
 

@@ -9,12 +9,12 @@ MAX_INVOKE_ATTEMPTS = 3
 INVOKE_RETRY_DELAY_SECONDS = 10
 
 
-def invoke_llm(state: SessionState, messages: list) -> str:
+def invoke_llm(state: SessionState, tools: dict | None = None) -> str:
     print("\nThinking...\n")
     while True:
         for attempt_number in range(1, MAX_INVOKE_ATTEMPTS + 1):
             try:
-                response = get_openai_client().responses.create(model=state.model, input=messages)
+                response = get_openai_client().responses.create(model=state.model, input=state.messages)
                 break
             except (openai.RateLimitError, openai.APIConnectionError) as invoke_error:
                 if attempt_number == MAX_INVOKE_ATTEMPTS:
@@ -23,14 +23,17 @@ def invoke_llm(state: SessionState, messages: list) -> str:
                 time.sleep(INVOKE_RETRY_DELAY_SECONDS)
         reply = response.output_text
 
+        if tools is None:
+            return reply
+
         reply_start, tool_name, *rest = reply.split(maxsplit=2)
-        if reply_start != "[TOOL]" or tool_name not in state.tools:
+        if reply_start != "[TOOL]" or tool_name not in tools:
             return reply
         tool_args = rest[0] if rest else ""
-        result = state.tools[tool_name].run(tool_args)
+        result = tools[tool_name].run(tool_args)
         print(f"Tool: {tool_name} {tool_args}")
-        messages.append({"role": "assistant", "content": reply})
-        messages.append(
+        state.messages.append({"role": "assistant", "content": reply})
+        state.messages.append(
             {
                 "role": "user",
                 "content": "[TOOL RESULT] The tool ran. If the task is done, answer the user in your own words; don't repeat raw output. Don't call a tool again with the same arguments.\n"

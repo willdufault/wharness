@@ -10,5 +10,4 @@ from dataclasses import dataclass
 @dataclass
 class SessionState:
     model: str
-    tools: dict
     messages: list
